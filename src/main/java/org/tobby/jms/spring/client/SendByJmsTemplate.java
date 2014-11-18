@@ -16,13 +16,15 @@ import org.tobby.jms.spring.client.util.Util;
 public class SendByJmsTemplate {
 
 	public static void main(String[] args) {
-		//AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("org.tobby.jms.spring.client.config");
+		AnnotationConfigApplicationContext context = 
+				new AnnotationConfigApplicationContext("org.tobby.jms.spring.client.config");
 		MessageCreator messageCreator = new MessageCreator() {
 			public Message createMessage(Session session) throws JMSException {
 				return session.createTextMessage(Util.formatDate(new Date()) + "--Ping Ping Ping!");
 			}
 		};
-		ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		//ConfigurableApplicationContext context = 
+		//		new ClassPathXmlApplicationContext("applicationContext.xml");
 		JmsTemplate jmsTemplate = (JmsTemplate)context.getBean("jmsTemplate");
 		jmsTemplate.send("mailbox-destination", messageCreator);
 		context.close();
