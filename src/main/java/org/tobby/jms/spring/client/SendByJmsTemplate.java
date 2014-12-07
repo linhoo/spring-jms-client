@@ -1,6 +1,8 @@
 package org.tobby.jms.spring.client;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -45,9 +47,14 @@ public class SendByJmsTemplate {
 //		};
 		//ConfigurableApplicationContext context = 
 		//		new ClassPathXmlApplicationContext("applicationContext.xml");
-		ConfigurableApplicationContext context = SpringApplication.run(AppConfig.class, args);
+		SpringApplication application = new SpringApplication(AppConfig.class);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("spring.activemq.broker-url", "tcp://localhost:61616");
+		application.setDefaultProperties(map);
+		application.setShowBanner(false);
+		ConfigurableApplicationContext context = application.run(args);
 		SendByJmsTemplate send = (SendByJmsTemplate)context.getBean("sendByJmsTemplate");
-		send.simpleSend(Util.formatDate(new Date()) + "--Ping Ping Ping!");
+		send.simpleSend(Util.formatDate(new Date()) + "--Ping Ping Ping From default broker urls!");
 		context.close();
 	}
 
