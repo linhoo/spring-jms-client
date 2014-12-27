@@ -14,6 +14,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.jms.core.MessagePostProcessor;
 import org.springframework.stereotype.Component;
 import org.tobby.jms.spring.client.config.AppConfig;
 import org.tobby.jms.spring.client.util.Util;
@@ -54,7 +55,12 @@ public class SendByJmsTemplate {
 		application.setShowBanner(false);
 		ConfigurableApplicationContext context = application.run(args);
 		SendByJmsTemplate send = (SendByJmsTemplate)context.getBean("sendByJmsTemplate");
-		send.simpleSend(Util.formatDate(new Date()) + "--Ping Ping Ping From default broker urls!");
+		//send.simpleSend(Util.formatDate(new Date()) + "--Ping Ping Ping From default broker urls!");
+		Map<String, Object> myMap = new HashMap<String, Object>();
+		myMap.put("userName", "haaa");
+		myMap.put("password", "22222222");
+		//send.convertAndSend(myMap);
+		send.convertAndSendPost(myMap);
 		context.close();
 	}
 
@@ -62,6 +68,21 @@ public class SendByJmsTemplate {
 		this.jmsTemplate.send(this.queue, new MessageCreator() {
 			public Message createMessage(Session session) throws JMSException {
 				return session.createTextMessage(text);
+			}
+		});
+	}
+	
+	public void convertAndSend(Map<String, Object> map) {
+		this.jmsTemplate.convertAndSend(this.queue, map);
+	}
+	
+	public void convertAndSendPost(Map<String, Object> map) {
+		this.jmsTemplate.convertAndSend(this.queue, map, new MessagePostProcessor() {
+			public Message postProcessMessage(Message message) throws JMSException {
+				message.setIntProperty("AccountID", 12345);
+				message.setJMSCorrelationID("123-00001");
+				message.setDoubleProperty("MyWife", 123.453);
+				return message;
 			}
 		});
 	}
