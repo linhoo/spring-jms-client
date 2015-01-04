@@ -30,4 +30,9 @@ public class AppConfig {
 		return new ActiveMQQueue("mailbox-destination");
 	}
 	
+	@Bean
+	public Queue replyTo() {
+		return new ActiveMQQueue("replyto_queue");
+	}
+	
 }

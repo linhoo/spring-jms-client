@@ -27,6 +27,9 @@ public class SendByJmsTemplate {
 
 	@Autowired
 	private Queue queue;
+	
+	@Autowired
+	private Queue replyTo;
 
 //	@Autowired
 //	private void setConnectionFactory(ConnectionFactory connectionFactory) {
@@ -55,12 +58,12 @@ public class SendByJmsTemplate {
 		application.setShowBanner(false);
 		ConfigurableApplicationContext context = application.run(args);
 		SendByJmsTemplate send = (SendByJmsTemplate)context.getBean("sendByJmsTemplate");
-		//send.simpleSend(Util.formatDate(new Date()) + "--Ping Ping Ping From default broker urls!");
+		send.simpleSend(Util.formatDate(new Date()) + "--Ping Ping Ping From default broker urls!");
 		Map<String, Object> myMap = new HashMap<String, Object>();
 		myMap.put("userName", "haaa");
 		myMap.put("password", "22222222");
 		//send.convertAndSend(myMap);
-		send.convertAndSendPost(myMap);
+		//send.convertAndSendPost(myMap);
 		context.close();
 	}
 
@@ -82,6 +85,7 @@ public class SendByJmsTemplate {
 				message.setIntProperty("AccountID", 12345);
 				message.setJMSCorrelationID("123-00001");
 				message.setDoubleProperty("MyWife", 123.453);
+				//message.setJMSReplyTo(replyTo);
 				return message;
 			}
 		});
